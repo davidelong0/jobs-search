@@ -1,29 +1,24 @@
 import { useState } from "react";
-import { Container, Row, Col, Form } from "react-bootstrap";
-import Job from "./Job";
-import { Link } from 'react-router-dom';
+import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { fetchSearchResults } from "../redux/actions";
+import { useNavigate } from "react-router-dom"; 
 
 const MainSearch = () => {
   const [query, setQuery] = useState("");
-  const [jobs, setJobs] = useState([]);
+  const dispatch = useDispatch();
+  const navigate = useNavigate(); 
 
-  const baseEndpoint = "https://strive-benchmark.herokuapp.com/api/jobs?search=";
+  const handleChange = (e) => setQuery(e.target.value);
 
-  const handleChange = e => setQuery(e.target.value);
-
-  const handleSubmit = async e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch(baseEndpoint + query + "&limit=20");
-      if (response.ok) {
-        const { data } = await response.json();
-        setJobs(data);
-      } else {
-        alert("Error fetching results");
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    dispatch(fetchSearchResults(query)); 
+    navigate("/company"); 
+  };
+
+  const goToFavourites = () => {
+    navigate("/favourites"); 
   };
 
   return (
@@ -33,8 +28,6 @@ const MainSearch = () => {
           <h1 className="display-1">Remote Jobs Search</h1>
         </Col>
 
-
-
         <Col xs={10} className="mx-auto">
           <Form onSubmit={handleSubmit}>
             <Form.Control
@@ -43,19 +36,16 @@ const MainSearch = () => {
               onChange={handleChange}
               placeholder="type and press Enter"
             />
+            <Button variant="primary" type="submit" className="mt-2">
+              Search
+            </Button>
           </Form>
         </Col>
-
-        <Col xs={10} className="mx-auto mb-5">
-          {jobs.map(jobData => (
-            <Job key={jobData._id} data={jobData} />
-          ))}
-        </Col>
-
-        <Col xs={10} className="mx-auto mt-3">
-          <Link to="/favourites" className="btn btn-warning">
-             Vai ai Preferiti
-          </Link>
+        
+        <Col xs={10} className="mx-auto mt-4">
+          <Button variant="secondary" onClick={goToFavourites}>
+            Vai ai Preferiti
+          </Button>
         </Col>
       </Row>
     </Container>

@@ -30,7 +30,7 @@ const Favourites = () => {
         </ul>
       )}
        <Link to="/" className="btn btn-secondary mb-3">
-        🔙 Torna alla ricerca
+        Torna alla ricerca
       </Link>
 
     </div>
